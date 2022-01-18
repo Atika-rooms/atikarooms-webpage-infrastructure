@@ -10,7 +10,10 @@
 	"settings": {},
 
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": ["hashicorp.terraform"],
+	"extensions": [
+		"hashicorp.terraform",
+		"eamodio.gitlens"
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
