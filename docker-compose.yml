@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  development:
+    container_name: "${USER}_${PROJECT_NAME}_development"
+    image: "${PROJECT_NAME}_development:${USER}"
+    build:
+      context: ./terraform
+      dockerfile: ../docker/dockerfiles/development.Dockerfile
+      args:
+        USERNAME: ${USER:-dev}
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+    volumes:
+      - .:/code
+      - $HOME/.ssh:$HOME/.ssh:ro
+      - $HOME/.gitconfig:$HOME/.gitconfig:cached
+      - $HOME/.bashrc:$HOME/.bashrc:cached
+    env_file:
+      - ./docker/environment/development.env

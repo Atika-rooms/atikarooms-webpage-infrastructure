@@ -2,9 +2,9 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/alpine
 {
 	"name": "Terraform",
-	"build": {
-		"dockerfile": "Dockerfile",
-	},
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "development",
+	"workspaceFolder": "/code",
 	
 	// Set *default* container specific settings.json values on container create. 
 	"settings": {},
@@ -12,7 +12,8 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"hashicorp.terraform",
-		"eamodio.gitlens"
+		"eamodio.gitlens",
+		"ms-azuretools.vscode-docker"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
