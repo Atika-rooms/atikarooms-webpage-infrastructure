@@ -6,10 +6,12 @@ ARG BUILD_PACKAGES="\
   wget \
   unzip"
 
+ARG TF_VER=1.1.3
+
 RUN apt-get update && \
   apt-get install -y ${BUILD_PACKAGES} && \
-  wget https://releases.hashicorp.com/terraform/1.1.3/terraform_1.1.3_linux_amd64.zip && \
-  unzip terraform_1.1.3_linux_amd64.zip
+  wget https://releases.hashicorp.com/terraform/${TF_VER}/terraform_${TF_VER}_linux_amd64.zip && \
+  unzip terraform_${TF_VER}_linux_amd64.zip
 
 
 FROM ubuntu:20.04
