@@ -6,7 +6,7 @@ ARG BUILD_PACKAGES="\
   wget \
   unzip"
 
-ARG TF_VER=1.1.3
+ARG TF_VER=1.1.6
 
 RUN apt-get update && \
   apt-get install -y ${BUILD_PACKAGES} && \
