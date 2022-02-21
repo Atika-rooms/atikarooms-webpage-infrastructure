@@ -24,9 +24,24 @@ build: ##@containers Forces to build the development container
 down: ##@containers Destroys all containers
 	@docker-compose down
 
+validate-testing: ##@terraform Executes the Testing environment validation
+	@terraform -chdir=terraform/environments/testing validate
+validate-production: ##@terraform Executes the Production environment validation
+	@terraform -chdir=terraform/environments/production validate
 plan-testing: ##@terraform Executes the Testing environment plan
 	@terraform -chdir=terraform/environments/testing plan -var-file=testing.tfvars
 plan-production: ##@terraform Executes the Production environment plan
 	@terraform -chdir=terraform/environments/production plan -var-file=production.tfvars
+apply-testing: ##@terraform Applies changes to the Testing environment
+	@terraform -chdir=terraform/environments/testing apply -var-file=testing.tfvars -auto-approve
+apply-production: ##@terraform Applies changes to the Production environment
+	@terraform -chdir=terraform/environments/production apply -var-file=production.tfvars -auto-approve
 fmt: ##@terraform Executes a terraform fmt in all directories
 	@terraform fmt -diff -recursive terraform/
+
+test: ##@CI
+	@echo "Checking format..." && terraform fmt -check -diff -recursive terraform/
+	@echo "Validating Testing..." && make validate-testing
+	@echo "Validating Production..." && make validate-production
+	@echo "Planing Testing..." && make plan-testing
+	@echo "Planing Production..." && make plan-production
