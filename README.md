@@ -2,7 +2,7 @@
 
 Repository of the AtikaRooms Webpage Infrastructure served on {{TBD}}. It is based on Terraform that build in a simple to understand and reproducible way an S3 Bucket, a Cloudfront distribution, a certificate on Amazon Certificate Manager and all necessary Route 53 records.
 
-TODO: INFRASTRUCTURE DIAGRAM
+![Diagram](docs/atika-basic-diagram.drawio.png)
 
 ## Requirements
 
@@ -24,13 +24,13 @@ If you are not using VS Code or have access to mentioned extension you still can
 
 To start the development container and start a tty on it:
 
-```sh
+```
 make start
 ```
 
 Once inside the development container, you can make use of the Makefile to shorten typical Terraform commands, check the Makefile documentation to find them.
 
-```sh
+```
 make help
 ```
 
