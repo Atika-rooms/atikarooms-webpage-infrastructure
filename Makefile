@@ -39,6 +39,11 @@ apply-production: ##@terraform Applies changes to the Production environment
 fmt: ##@terraform Executes a terraform fmt in all directories
 	@terraform fmt -diff -recursive terraform/
 
+lint-testing:
+	@cd terraform/environments/testing && tflint --config ../../../.tflint.hcl --module --var-file testing.tfvars .
+lint-production:
+	@cd terraform/environments/production && tflint --config ../../../.tflint.hcl --module --var-file production.tfvars .
+
 test: ##@CI
 	@echo "Checking format..." && terraform fmt -check -diff -recursive terraform/
 	@echo "Validating Testing..." && make validate-testing

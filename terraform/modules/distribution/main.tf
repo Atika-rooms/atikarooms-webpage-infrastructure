@@ -83,12 +83,20 @@ resource "aws_cloudfront_distribution" "cdn" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "https-only"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
   }
 
+  custom_error_response {
+    error_caching_min_ttl = 10
+    error_code            = 403
+    response_code         = 403
+    response_page_path    = "/index.html"
+  }
+
+  price_class = "PriceClass_100"
   restrictions {
     geo_restriction {
       restriction_type = "none"
