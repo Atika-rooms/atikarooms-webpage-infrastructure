@@ -6,7 +6,7 @@ ARG BUILD_PACKAGES="\
   wget \
   unzip"
 
-ARG TF_VER=1.1.6
+ARG TF_VER=1.1.7
 ARG TFSEC_VER=v1.9.0
 ARG TFLINT_VER=v0.34.1
 
