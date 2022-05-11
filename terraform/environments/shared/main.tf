@@ -1,10 +1,3 @@
-provider "aws" {}
-
-provider "aws" {
-  region = "us-east-1"
-  alias  = "us-east-1"
-}
-
 resource "aws_cloudfront_origin_access_identity" "cdn_origin" {}
 
 module "web_hosting" {
@@ -17,6 +10,8 @@ module "web_hosting" {
 
 module "distribution" {
   source = "../../modules/distribution"
+
+  aws_default_tags = var.aws_default_tags
 
   root_domain = var.root_domain
   web_domains = var.web_domains

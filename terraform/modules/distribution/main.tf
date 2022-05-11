@@ -1,6 +1,10 @@
 provider "aws" {
   region = "us-east-1"
   alias  = "us-east-1"
+
+  default_tags {
+    tags = var.aws_default_tags
+  }
 }
 
 data "aws_route53_zone" "r53_zone" {

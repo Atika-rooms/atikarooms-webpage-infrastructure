@@ -1,3 +1,9 @@
+variable "aws_default_tags" {
+  type        = map(any)
+  description = "Default tags to attach to the AWS provider"
+  default     = {}
+}
+
 variable "root_domain" {
   type        = string
   description = "The domain where the website will be hosted, used to order certificates"

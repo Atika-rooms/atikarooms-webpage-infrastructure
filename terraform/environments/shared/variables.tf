@@ -1,3 +1,9 @@
+variable "aws_default_tags" {
+  type        = map(any)
+  description = "Default tags to attach to the AWS provider"
+  default     = {}
+}
+
 variable "bucket_name" {
   type        = string
   description = "S3 Bucket name that will host the static website"
