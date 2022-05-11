@@ -1,49 +1,52 @@
-FROM ubuntu:20.04 as builder
+FROM registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:latest as builder
+
+LABEL maintainer="Arnau Llamas <arnau.llamas@gmail.com>"
 
 WORKDIR /dist
 
 ARG BUILD_PACKAGES="\
-  wget \
-  unzip"
+  unzip \
+  sudo \
+  bash \
+  "
 
-ARG TF_VER=1.1.7
-ARG TFSEC_VER=v1.9.0
-ARG TFLINT_VER=v0.34.1
+# TODO: install 'go' to install always latest version
+# Bug where newest TFSEC versions do not follow symlinks:
+# https://github.com/aquasecurity/tfsec/issues/1595
+ARG TFSEC_VERSION=v1.20.2
 
-RUN apt-get update && \
-  apt-get install -y ${BUILD_PACKAGES}
+RUN apk add --no-cache ${BUILD_PACKAGES}
 
-RUN wget https://releases.hashicorp.com/terraform/${TF_VER}/terraform_${TF_VER}_linux_amd64.zip && \
-  unzip terraform_${TF_VER}_linux_amd64.zip
+RUN wget https://github.com/aquasecurity/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64 \
+  && chmod +x tfsec-linux-amd64
 
-RUN wget https://github.com/aquasecurity/tfsec/releases/download/${TFSEC_VER}/tfsec-linux-amd64 && \
-  chmod +x tfsec-linux-amd64
+RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash \
+  && mv /usr/local/bin/tflint .
 
-RUN wget https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VER}/tflint_linux_amd64.zip && \
-  unzip tflint_linux_amd64.zip
 
-FROM ubuntu:20.04
+FROM registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:latest
 
 WORKDIR /code
 
 ARG DEV_PACKAGES="\
-  git \
-  make"
+  make \
+  bash \
+  gettext \
+  moreutils \
+  "
 
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
-COPY --from=builder /dist/terraform /bin/terraform
 COPY --from=builder /dist/tfsec-linux-amd64 /bin/tfsec
 COPY --from=builder /dist/tflint /bin/tflint
 
-RUN apt-get update && \
-  apt-get install -y ${DEV_PACKAGES}
+RUN apk add --no-cache ${DEV_PACKAGES}
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && chown -R $USER_UID:$USER_GID /home/$USERNAME
+RUN addgroup -g $USER_GID $USERNAME \
+  && adduser -u $USER_UID -D -s /bin/sh $USERNAME -G $USERNAME \
+  && chown -R $USER_UID:$USER_GID /home/$USERNAME
 
 USER ${USERNAME}
 
