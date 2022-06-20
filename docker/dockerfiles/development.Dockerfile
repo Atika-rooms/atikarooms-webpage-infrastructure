@@ -1,4 +1,6 @@
-FROM registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:latest as builder
+ARG TERRA_VER=1.2
+
+FROM registry.gitlab.com/gitlab-org/terraform-images/releases/${TERRA_VER}:latest as lint-builder
 
 LABEL maintainer="Arnau Llamas <arnau.llamas@gmail.com>"
 
@@ -10,21 +12,18 @@ ARG BUILD_PACKAGES="\
   bash \
   "
 
-# TODO: install 'go' to install always latest version
-# Bug where newest TFSEC versions do not follow symlinks:
-# https://github.com/aquasecurity/tfsec/issues/1595
-ARG TFSEC_VERSION=v1.20.2
-
 RUN apk add --no-cache ${BUILD_PACKAGES}
-
-RUN wget https://github.com/aquasecurity/tfsec/releases/download/${TFSEC_VERSION}/tfsec-linux-amd64 \
-  && chmod +x tfsec-linux-amd64
 
 RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash \
   && mv /usr/local/bin/tflint .
 
 
-FROM registry.gitlab.com/gitlab-org/terraform-images/releases/1.1:latest
+FROM golang:latest as sec-builder
+
+RUN go install github.com/aquasecurity/tfsec/cmd/tfsec@latest
+
+
+FROM registry.gitlab.com/gitlab-org/terraform-images/releases/${TERRA_VER}:latest
 
 WORKDIR /code
 
@@ -39,8 +38,8 @@ ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
-COPY --from=builder /dist/tfsec-linux-amd64 /bin/tfsec
-COPY --from=builder /dist/tflint /bin/tflint
+COPY --from=sec-builder /go/bin/tfsec /bin/tfsec
+COPY --from=lint-builder /dist/tflint /bin/tflint
 
 RUN apk add --no-cache ${DEV_PACKAGES}
 
