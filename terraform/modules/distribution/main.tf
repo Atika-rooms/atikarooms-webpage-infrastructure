@@ -12,21 +12,21 @@ data "aws_route53_zone" "r53_zone" {
   private_zone = false
 }
 
-resource "aws_route53_record" "web_domain" {
-  for_each = toset(var.web_domains)
+# resource "aws_route53_record" "web_domain" {
+#   for_each = toset(var.web_domains)
 
-  allow_overwrite = true
-  name            = each.key
-  type            = "A"
+#   allow_overwrite = true
+#   name            = each.key
+#   type            = "A"
 
-  alias {
-    name                   = aws_cloudfront_distribution.cdn.domain_name
-    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
-    evaluate_target_health = false
-  }
+#   alias {
+#     name                   = aws_cloudfront_distribution.cdn.domain_name
+#     zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
+#     evaluate_target_health = false
+#   }
 
-  zone_id = data.aws_route53_zone.r53_zone.zone_id
-}
+#   zone_id = data.aws_route53_zone.r53_zone.zone_id
+# }
 
 resource "aws_acm_certificate" "acm_web_certificate" {
   provider                  = aws.us-east-1
@@ -87,6 +87,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       }
     }
 
+    compress               = false
     viewer_protocol_policy = "https-only"
     min_ttl                = 0
     default_ttl            = 3600
